@@ -2,7 +2,7 @@ import numpy as np
 import os
 import re
 
-DATA = '../data'
+DATA = './data'
 
 
 def normalize_mid_points(X, skip_midpoints=False):
@@ -54,7 +54,7 @@ labels_reversed = reverse_labels(labels.copy())
 assert np.sum(np.abs(labels - labels_reversed)) == np.sum(labels != 0)
 
 
-def read_data(name, skip_midpoints=False, preprocess_data=None, all_labels=False, verbose=False):
+def read_data(name, data_dir = DATA,  skip_midpoints=False, preprocess_data=None, all_labels=False, verbose=False):
     """ Read numpy array with saved keypoints
 
     Params:
@@ -75,10 +75,10 @@ def read_data(name, skip_midpoints=False, preprocess_data=None, all_labels=False
     else:
         label_name = name
     
-    with open(f'{DATA}/labels/{label_name}') as f:
+    with open(f'{data_dir}/data/labels/{label_name}') as f:
         labels = f.readlines()
     
-    X = np.load(f'{DATA}/keypoints/{name}.npy')
+    X = np.load(f'{data_dir}/data/keypoints/{name}.npy')
     N = X.shape[0]
     X = X.reshape((N, 17, 3))
     y = np.zeros(N, dtype=int)
@@ -118,13 +118,13 @@ def read_data(name, skip_midpoints=False, preprocess_data=None, all_labels=False
     return X, y
 
 
-def get_train_data(skip_midpoints=False, preprocess_data=None, all_labels=False):
+def get_train_data(data_dir = DATA, skip_midpoints=False, preprocess_data=None, all_labels=False):
     """ Get data for training and testing
     
     Returns:
         X_train, y_train, X_test, y_test
     """
-    labels = os.listdir(f'{DATA}/labels')
+    labels = os.listdir(f'{data_dir}/data/labels')
 
     labels_by_punch_types = [[], [], []]
 
@@ -143,7 +143,7 @@ def get_train_data(skip_midpoints=False, preprocess_data=None, all_labels=False)
 
     for labels in labels_by_punch_types:
         for label in labels:
-            X, y = read_data(label, skip_midpoints, preprocess_data, all_labels)
+            X, y = read_data(label, data_dir, skip_midpoints, preprocess_data, all_labels)
             X_train_list.append(X)
             y_train_list.append(y)
 
